@@ -1,3 +1,5 @@
+import re
+
 import requests
 from apprise.decorators import notify
 
@@ -8,11 +10,19 @@ def send_bale(body, title, notify_type, meta, **kwargs):
     bot_secret = meta.get("password")
     chat_id = meta.get("host")
 
-    if not bot_id or not bot_secret or not chat_id:
+    if (
+        not isinstance(bot_id, str)
+        or not re.fullmatch(r"[0-9]+", bot_id)
+        or not bot_secret
+        or not isinstance(chat_id, str)
+        or not re.fullmatch(r"-?[0-9]+", chat_id)
+    ):
         return False
 
     token = f"{bot_id}:{bot_secret}"
     text = f"{title}\n{body}" if title else body
+    if len(text) > 4096:
+        return False
 
     try:
         response = requests.post(
@@ -22,6 +32,8 @@ def send_bale(body, title, notify_type, meta, **kwargs):
                 "text": text,
             },
             timeout=15,
+            # The token is in the URL path; never forward it on redirects.
+            allow_redirects=False,
         )
         response.raise_for_status()
         payload = response.json()

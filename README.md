@@ -21,11 +21,11 @@ A lightweight, file-based Apprise custom notification plugin for the Bale Bot AP
 | Apprise CLI | Yes, with `-P` / `--plugin-path` |
 | Apprise Python library | Yes, with `AppriseAsset(plugin_paths=...)` |
 | Apprise API container | Yes, with `APPRISE_PLUGIN_PATHS` |
-| Bale messages | Text via `sendMessage`, with an optional title prefix |
+| Bale messages | Text via `sendMessage`, with an optional title prefix; 4096 characters maximum |
 | Destinations | One Bale chat per URL |
 | Attachments and media | Not supported |
 
-The plugin calls Bale's `sendMessage` method over HTTPS. When a title is provided, the sent text is `title`, a newline, then the body. Requests time out after 15 seconds. Text is forwarded as-is; Bale applies its default text formatting.
+The plugin calls Bale's `sendMessage` method over HTTPS. When a title is provided, the sent text is `title`, a newline, then the body. Bale accepts up to 4096 characters for the complete text, including the title and newline; this custom plugin returns failure for longer messages. Requests time out after 15 seconds. Text is forwarded as-is; Bale applies its default text formatting.
 
 ## Requirements
 
@@ -67,7 +67,7 @@ If Bale gives you a token in the form `BOT_ID:TOKEN_SECRET`, split it at the col
 Clone this repository, then run Apprise with the `plugin` directory on its plugin path:
 
 ```bash
-git clone https://github.com/pooya220/apprise-bale.git
+git clone https://github.com/AryanZeynali/apprise-bale.git
 cd apprise-bale
 
 apprise \
@@ -150,7 +150,7 @@ The bot token is part of the URL. Treat the full `bale://` URL like a password: 
 
 ## Project links
 
-- [Bale Bot API documentation](https://docs.bale.ai/)
+- [Bale `sendMessage` API documentation](https://docs.bale.ai/#sendmessage)
 - [Apprise custom notification decorator](https://appriseit.com/library/extending/decorator/)
 - [Apprise CLI plugin paths](https://appriseit.com/cli/usage/)
 - [Apprise API environment variables](https://appriseit.com/api/reference/environment/)
